@@ -1,0 +1,45 @@
+image: gitpod/workspace-full-vnc
+
+tasks:
+  - init: |
+      # Update and install necessary packages
+      sudo apt update
+      sudo apt install -y apache2 mysql-server php php-mysql libapache2-mod-php php-cli wget unzip
+      
+      # Download and set up WordPress
+      wget https://wordpress.org/latest.zip
+      unzip latest.zip
+      sudo mv wordpress/* /var/www/html/
+      sudo rm -rf wordpress latest.zip
+
+      # Set permissions
+      sudo chown -R www-data:www-data /var/www/html
+      sudo chmod -R 755 /var/www/html
+
+      # Start Apache and MySQL
+      sudo service apache2 start
+      sudo service mysql start
+
+      # Set up MySQL database
+      sudo mysql -u root -e "CREATE DATABASE wordpress;"
+      sudo mysql -u root -e "CREATE USER 'wp_user'@'localhost' IDENTIFIED BY 'password';"
+      sudo mysql -u root -e "GRANT ALL PRIVILEGES ON wordpress.* TO 'wp_user'@'localhost';"
+      sudo mysql -u root -e "FLUSH PRIVILEGES;"
+
+      # Ensure environment variables are correctly set
+      export GITPOD_REPO_ROOT="/workspace/$(basename $(git remote get-url origin) .git)"
+    command: |
+      # Keep services running
+      sudo service apache2 start
+      sudo service mysql start
+      tail -f /dev/null
+  - name: Preview
+    command: sleep 30 && gp preview "$(gp url 80)"
+
+vscode:
+  extensions:
+    - GitHub.copilot
+    - bmewburn.vscode-intelephense-client
+    - jasonlhy.hungry-delete
+    - dsznajder.es7-react-js-snippets
+    - msjsdiag.debugger-for-chrome

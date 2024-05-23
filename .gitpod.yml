@@ -38,8 +38,6 @@ tasks:
 
 vscode:
   extensions:
-    - GitHub.copilot
     - bmewburn.vscode-intelephense-client
     - jasonlhy.hungry-delete
     - dsznajder.es7-react-js-snippets
-    - msjsdiag.debugger-for-chrome
